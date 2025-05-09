@@ -59,115 +59,147 @@ void imprimirMatrizConInfectado(int N, vector<vector<int>>& matriz, vector<bool>
 
 int main() {
     int N;
+    int opcion;
 
-    // Pedimos al usuario el número de empleados
-    cout << "Ingresa el número de empleados (N entre 5 y 120): ";
-    cin >> N;
+    do {
+        // Limpiar la pantalla y mostrar el menú
+        system("cls");
+        cout << "/////////////////////////////////////////////\n";
+        cout << "//              MENU DE CONTAGIOS          // \n";
+        cout << "////////////////////////////////////////////\n";
+        cout << "\nQue accion deseas hacer?\n";
+        cout << "1.- Iniciar simulacion\n";
+        cout << "2.- Salir\n";
+        cout << "Selecciona una opcion: ";
+        cin >> opcion;
 
-    if (N < 5 || N > 120) {
-        cout << "El número de empleados debe estar entre 5 y 120." << endl;
-    }
-    else {
-        // Creamos la matriz
-        vector<vector<int>> matriz(N, vector<int>(N, 0));
-        vector<bool> infectados(N, false);  // Vector para saber si un empleado está infectado
+        // Procesar la opción seleccionada
+        switch (opcion) {
+        case 1:
+            // Iniciar simulación
+            cout << "\nIngresa el número de empleados (N entre 5 y 120): ";
+            cin >> N;
 
-        // Creamos y mostramos la matriz de relaciones
-        crearMatriz(N, matriz);
+            if (N < 5 || N > 120) {
+                cout << "El número de empleados debe estar entre 5 y 120." << endl;
+            }
+            else {
+                // Creamos la matriz
+                vector<vector<int>> matriz(N, vector<int>(N, 0));
+                vector<bool> infectados(N, false);  // Vector para saber si un empleado está infectado
 
-        // Imprimimos la matriz inicial de relaciones
-        cout << "\nMatriz inicial de relaciones:\n";
-        imprimirMatrizConInfectado(N, matriz, infectados);  // -1 significa que no hay infectados aún
+                // Creamos y mostramos la matriz de relaciones
+                crearMatriz(N, matriz);
 
-        // Pedimos al usuario que ingrese el número del empleado a infectar
-        int infectado;
-        cout << "\nIngresa el número del empleado a infectar (de 1 a " << N << "): ";
-        cin >> infectado;
+                // Imprimimos la matriz inicial de relaciones
+                cout << "\nMatriz inicial de relaciones:\n";
+                imprimirMatrizConInfectado(N, matriz, infectados);  // -1 significa que no hay infectados aún
 
-        // Validamos que el número del empleado esté dentro del rango
-        if (infectado < 1 || infectado > N) {
-            cout << "Número de empleado inválido. Debe estar entre 1 y " << N << "." << endl;
-        }
-        else {
-            infectado -= 1;  // Ajustamos el índice para que coincida con la matriz (de 0 a N-1)
-            infectados[infectado] = true;  // Marcamos al empleado infectado
-            int empleadosInfectados = 1;  // Contador de los empleados infectados
+                // Pedimos al usuario que ingrese el número del empleado a infectar
+                int infectado;
+                cout << "\nIngresa el número del empleado a infectar (de 1 a " << N << "): ";
+                cin >> infectado;
 
-            set<int> infectadosDia2;  // Usamos un set para evitar duplicados
-            bool contagiosPosibles = true;  // Para verificar si aún hay contagios posibles
-            int diasTotales = 1;  // Contador de días
+                // Validamos que el número del empleado esté dentro del rango
+                if (infectado < 1 || infectado > N) {
+                    cout << "Número de empleado inválido. Debe estar entre 1 y " << N << "." << endl;
+                }
+                else {
+                    infectado -= 1;  // Ajustamos el índice para que coincida con la matriz (de 0 a N-1)
+                    infectados[infectado] = true;  // Marcamos al empleado infectado
+                    int empleadosInfectados = 1;  // Contador de los empleados infectados
 
-            // Empezamos el ciclo de contagio por días
-            while (contagiosPosibles) {
-                cout << "\nDía " << diasTotales << ":\n";
-                cout << "Se infectó al empleado número " << infectado + 1 << ".\n";
+                    set<int> infectadosDia2;  // Usamos un set para evitar duplicados
+                    bool contagiosPosibles = true;  // Para verificar si aún hay contagios posibles
+                    int diasTotales = 1;  // Contador de días
 
-                // Imprimimos la matriz con la "X" en el lugar del empleado infectado
-                imprimirMatrizConInfectado(N, matriz, infectados);
+                    // Empezamos el ciclo de contagio por días
+                    while (contagiosPosibles) {
+                        cout << "\nDía " << diasTotales << ":\n";
+                        cout << "Se infectó al empleado número " << infectado + 1 << ".\n";
 
-                // Encontramos los empleados infectados por contacto
-                vector<bool> infectadosNuevoDia(N, false);  // Para almacenar los infectados del día siguiente
+                        // Imprimimos la matriz con la "X" en el lugar del empleado infectado
+                        imprimirMatrizConInfectado(N, matriz, infectados);
 
-                // Recorremos todos los empleados infectados del día anterior
-                for (int i = 0; i < N; i++) {
-                    if (infectados[i]) {
-                        // Buscamos los empleados con los que tienen relación
-                        for (int j = 0; j < N; j++) {
-                            if (matriz[i][j] == 1 && !infectados[j]) {
-                                infectadosNuevoDia[j] = true;  // Marcamos como infectados a los relacionados
-                                infectadosDia2.insert(j);  // Guardamos los nuevos infectados
-                                empleadosInfectados++;  // Incrementamos el contador de empleados infectados
+                        // Encontramos los empleados infectados por contacto
+                        vector<bool> infectadosNuevoDia(N, false);  // Para almacenar los infectados del día siguiente
+
+                        // Recorremos todos los empleados infectados del día anterior
+                        for (int i = 0; i < N; i++) {
+                            if (infectados[i]) {
+                                // Buscamos los empleados con los que tienen relación
+                                for (int j = 0; j < N; j++) {
+                                    if (matriz[i][j] == 1 && !infectados[j]) {
+                                        infectadosNuevoDia[j] = true;  // Marcamos como infectados a los relacionados
+                                        infectadosDia2.insert(j);  // Guardamos los nuevos infectados
+                                        empleadosInfectados++;  // Incrementamos el contador de empleados infectados
+                                    }
+                                }
                             }
                         }
+
+                        // Verificamos si hay nuevos infectados en este día
+                        if (infectadosDia2.empty()) {
+                            contagiosPosibles = false;  // Si no hay nuevos infectados, terminamos el ciclo
+                            cout << "\nYa no hay más contagios posibles." << endl;
+                        }
+
+                        // Actualizamos el estado de los infectados
+                        for (int i : infectadosDia2) {
+                            infectados[i] = true;  // Marcamos a los nuevos infectados
+                        }
+
+                        // Imprimimos los empleados que se infectaron
+                        cout << "\nLos empleados infectados en el Día " << diasTotales << " son: ";
+                        for (int i : infectadosDia2) {
+                            cout << "E" << i + 1 << " ";
+                        }
+                        cout << endl;
+
+                        // Espera para el siguiente día
+                        int continuar;
+                        cout << "Presione 0 para salir, o cualquier otra tecla para continuar al siguiente día: ";
+                        cin >> continuar;  // Leer la entrada del usuario
+
+                        if (continuar == 0) {
+                            cout << "\nEl programa ha terminado.\n";
+                            break;  // Sale del ciclo y termina el programa
+                        }
+
+                        diasTotales++;  // Avanzamos al siguiente día
                     }
-                }
 
-                // Verificamos si hay nuevos infectados en este día
-                if (infectadosDia2.empty()) {
-                    contagiosPosibles = false;  // Si no hay nuevos infectados, terminamos el ciclo
-                    cout << "\nYa no hay más contagios posibles." << endl;
-                }
+                    // Recuento de los infectados (contamos las "X" en la última matriz)
+                    int infectadosRecuento = 0;
+                    for (int i = 0; i < N; i++) {
+                        if (infectados[i]) {
+                            infectadosRecuento++;
+                        }
+                    }
 
-                // Actualizamos el estado de los infectados
-                for (int i : infectadosDia2) {
-                    infectados[i] = true;  // Marcamos a los nuevos infectados
-                }
-
-                // Imprimimos los empleados que se infectaron
-                cout << "\nLos empleados infectados en el Día " << diasTotales << " son: ";
-                for (int i : infectadosDia2) {
-                    cout << "E" << i + 1 << " ";
-                }
-                cout << endl;
-
-                // Espera para el siguiente día
-                int continuar;
-                cout << "Presione 0 para salir, o cualquier otra tecla para continuar al siguiente día: ";
-                cin >> continuar;  // Leer la entrada del usuario
-
-                if (continuar == 0) {
-                    cout << "\nEl programa ha terminado.\n";
-                    break;  // Sale del ciclo y termina el programa
-                }
-
-                diasTotales++;  // Avanzamos al siguiente día
-            }
-
-            // Recuento de los infectados (contamos las "X" en la última matriz)
-            int infectadosRecuento = 0;
-            for (int i = 0; i < N; i++) {
-                if (infectados[i]) {
-                    infectadosRecuento++;
+                    // Reporte final
+                    double porcentaje = ((double)infectadosRecuento / N) * 100;  // Calculamos el porcentaje de empleados infectados
+                    cout << "\nDías transcurridos: " << diasTotales << endl;
+                    cout << "Número de empleados contagiados: " << infectadosRecuento << endl;
+                    cout << "Porcentaje de empleados contagiados: " << fixed << setprecision(2) << porcentaje << "%" << endl;
+                    cin.ignore();  
+                    cin.get(); 
+             
                 }
             }
+            break;  // Volver al menú después de iniciar la simulación
 
-            // Reporte final
-            double porcentaje = ((double)infectadosRecuento / N) * 100;  // Calculamos el porcentaje de empleados infectados
-            cout << "\nDías transcurridos: " << diasTotales << endl;
-            cout << "Número de empleados contagiados: " << infectadosRecuento << endl;
-            cout << "Porcentaje de empleados contagiados: " << fixed << setprecision(2) << porcentaje << "%" << endl;
+        case 2:
+            // Salir del programa
+            cout << "\nEl programa ha terminado. ¡Hasta luego!\n";
+            break;  // Fin del programa
+
+        default:
+            cout << "\nOpción no válida. Intenta de nuevo.\n";
+            break;
         }
-    }
+
+    } while (opcion != 2);  // Repetir el menú hasta que se seleccione la opción 2 (salir)
 
     return 0;
 }
